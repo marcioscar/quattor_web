@@ -45,6 +45,9 @@ export default function Index() {
 					className=' object-cover w-full  h-[212px] md:h-[523px] md:w-full rounded-xl '
 				/>
 				<div className='flex flex-col gap-2 mt-2 px-2 md:absolute md:bottom-4 md:left-0 md:right-0 md:px-4'>
+					<h2 className='text-stone-800 text-center text-lg md:text-xl font-bold bg-white/90 px-4 py-2 rounded-lg mb-1'>
+						Comprar Ingressos
+					</h2>
 					<a
 						href='https://www.bilheteriadigital.com/espetaculo-de-ballet-classico-alice-no-pais-das-maravilhas-sessao-16-30-15-de-novembro'
 						target='_blank'
