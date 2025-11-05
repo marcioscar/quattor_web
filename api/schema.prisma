@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+
+type TreinosExercicios {
+  Repeticoes String
+  carga      String
+  execid     String?
+  nome       String
+  obs        String
+  video      String?
+}
+
+type HistExercicios {
+ grupo       String?
+  carga       String?
+  nome        String?
+  data        DateTime  @db.Date
+  obs         String? 
+}
+model historicoExercicios{
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  aluno       Int?      @unique
+ histexe HistExercicios[]
+}
+
+type HistoricoTreinos {
+  data   DateTime @db.Date
+  treino String?
+  semana Int?
+  
+}
+
+type Planejados {
+  data  DateTime? @db.Date
+  treinoP String? 
+  feito Boolean?
+  dia String[]
+  id String?
+}
+
+model historico {
+  id      String             @id @default(auto()) @map("_id") @db.ObjectId
+  aluno   Int?                @unique
+  historico String?
+  patologias String?
+  nivel String?
+  treinos HistoricoTreinos[]
+  planejados Planejados[]
+  
+}
+model treinos {
+  id         String              @id @default(auto()) @map("_id") @db.ObjectId
+  exercicios TreinosExercicios[]
+  grupo      String
+  semana     Int
+}
+
+model classes {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  start  String
+  classe String
+  finish String
+  turma  String
+  icon   String
+  plano  String?
+  days   Int[]
+}
+
+type aluno {
+  nome      String   
+  idMember  Int
+  photo     String
+}
+
+ model reservas {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  data    DateTime  @db.Date
+  identificador String  @unique
+  aula    String
+  Hora    String
+  alunos  aluno[]
+ }
+
+ model grupo {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  nome    String
+  alunos  aluno[]
+  numero  Int
+  inicio  DateTime? @db.Date 
+  fim  DateTime? @db.Date 
+ }
