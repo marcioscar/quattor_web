@@ -1,0 +1,7 @@
+{
+	"functions": {
+		"app/routes/desafio.admin.$id.relatorio-pdf.tsx": {
+			"maxDuration": 30
+		}
+	}
+}

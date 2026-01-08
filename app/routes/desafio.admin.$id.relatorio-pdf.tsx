@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import puppeteer from "puppeteer-core";
+import puppeteerCore from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -18,31 +18,53 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		const isProduction =
 			!!process.env.VERCEL || process.env.NODE_ENV === "production";
 
-		// Configurar opções do Puppeteer para ambiente serverless
-		const browser = await puppeteer.launch({
-			args: isProduction
-				? [
-						...chromium.args,
-						"--hide-scrollbars",
-						"--disable-web-security",
-						"--disable-features=IsolateOrigins,site-per-process",
-				  ]
-				: ["--no-sandbox", "--disable-setuid-sandbox"],
-			defaultViewport: isProduction
-				? { width: 1920, height: 1080 }
-				: { width: 1200, height: 1600 },
-			executablePath: isProduction
-				? await chromium.executablePath()
-				: process.env.PUPPETEER_EXECUTABLE_PATH ||
-				  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-			headless: true,
-		});
+		// Configurar opções do Puppeteer baseado no ambiente
+		let launchOptions: any;
+
+		if (isProduction) {
+			// Em produção (Vercel), usar puppeteer-core com chromium
+			launchOptions = {
+				args: [
+					...chromium.args,
+					"--hide-scrollbars",
+					"--disable-web-security",
+					"--disable-features=IsolateOrigins,site-per-process",
+				],
+				defaultViewport: { width: 1920, height: 1080 },
+				executablePath: await chromium.executablePath(),
+				headless: true,
+			};
+		} else {
+			// Em desenvolvimento local, usar puppeteer-core com Chrome local
+			// Tenta encontrar o Chrome em locais comuns
+			const chromePaths = [
+				process.env.PUPPETEER_EXECUTABLE_PATH,
+				"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // macOS
+				"/usr/bin/google-chrome", // Linux
+				"/usr/bin/chromium-browser", // Linux
+				"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // Windows
+				"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", // Windows 32-bit
+			];
+
+			const executablePath =
+				chromePaths.find((path) => path) ||
+				"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+
+			launchOptions = {
+				args: ["--no-sandbox", "--disable-setuid-sandbox"],
+				executablePath,
+				headless: true,
+			};
+		}
+
+		const browser = await puppeteerCore.launch(launchOptions);
 
 		try {
 			const page = await browser.newPage();
 
-			// Aumentar o timeout para renderização de gráficos
-			page.setDefaultTimeout(60000);
+			// Configurar timeouts baseado no ambiente
+			const timeout = isProduction ? 20000 : 60000;
+			page.setDefaultTimeout(timeout);
 
 			// Configurar viewport para A4
 			await page.setViewport({
@@ -50,31 +72,37 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 				height: 1600,
 			});
 
-			// Navegar para a página do relatório
+			// Navegar para a página do relatório com timeout reduzido em produção
 			await page.goto(relatorioUrl, {
-				waitUntil: "networkidle0",
+				waitUntil: isProduction ? "domcontentloaded" : "networkidle0",
+				timeout: timeout,
 			});
 
-			// Aguardar que os canvas dos gráficos sejam renderizados
-			await page
-				.waitForFunction(
-					() => {
-						const canvases = document.querySelectorAll("canvas");
-						return (
-							canvases.length > 0 &&
-							Array.from(canvases).every((c) => c.width > 0)
-						);
-					},
-					{ timeout: 30000 }
-				)
-				.catch(() => {
-					// Se não houver gráficos, continuar mesmo assim
-					console.log("Gráficos não encontrados, continuando...");
-				});
+			// Em produção, aguardar um tempo fixo menor para gráficos renderizarem
+			// Em desenvolvimento, aguardar função que verifica canvas
+			if (isProduction) {
+				// Timeout reduzido para Vercel
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+			} else {
+				// Aguardar que os canvas dos gráficos sejam renderizados (apenas local)
+				await page
+					.waitForFunction(
+						() => {
+							const canvases = document.querySelectorAll("canvas");
+							return (
+								canvases.length > 0 &&
+								Array.from(canvases).every((c) => c.width > 0)
+							);
+						},
+						{ timeout: 30000 }
+					)
+					.catch(() => {
+						console.log("Gráficos não encontrados, continuando...");
+					});
 
-			// Aguardar um pouco mais para garantir renderização completa
-			// waitForTimeout não existe em versões mais recentes do Puppeteer
-			await new Promise((resolve) => setTimeout(resolve, 3000));
+				// Aguardar um pouco mais para garantir renderização completa
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+			}
 
 			// Gerar o PDF
 			const pdf = await page.pdf({
