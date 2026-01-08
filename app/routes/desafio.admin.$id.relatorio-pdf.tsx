@@ -62,8 +62,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		try {
 			const page = await browser.newPage();
 
-			// Configurar timeouts baseado no ambiente
-			const timeout = isProduction ? 20000 : 60000;
+			// Configurar timeouts - aumentar para permitir renderização dos gráficos
+			const timeout = isProduction ? 45000 : 60000;
 			page.setDefaultTimeout(timeout);
 
 			// Configurar viewport para A4
@@ -72,37 +72,35 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 				height: 1600,
 			});
 
-			// Navegar para a página do relatório com timeout reduzido em produção
+			// Navegar para a página do relatório
 			await page.goto(relatorioUrl, {
-				waitUntil: isProduction ? "domcontentloaded" : "networkidle0",
+				waitUntil: "networkidle0",
 				timeout: timeout,
 			});
 
-			// Em produção, aguardar um tempo fixo menor para gráficos renderizarem
-			// Em desenvolvimento, aguardar função que verifica canvas
-			if (isProduction) {
-				// Timeout reduzido para Vercel
-				await new Promise((resolve) => setTimeout(resolve, 2000));
-			} else {
-				// Aguardar que os canvas dos gráficos sejam renderizados (apenas local)
-				await page
-					.waitForFunction(
-						() => {
-							const canvases = document.querySelectorAll("canvas");
-							return (
-								canvases.length > 0 &&
-								Array.from(canvases).every((c) => c.width > 0)
-							);
-						},
-						{ timeout: 30000 }
-					)
-					.catch(() => {
-						console.log("Gráficos não encontrados, continuando...");
-					});
+			// Aguardar que os canvas dos gráficos sejam renderizados
+			// Tentar aguardar os gráficos renderizarem, mas não bloquear se demorar muito
+			await page
+				.waitForFunction(
+					() => {
+						const canvases = document.querySelectorAll("canvas");
+						if (canvases.length === 0) return false;
+						// Verificar se os canvas têm conteúdo renderizado
+						return Array.from(canvases).every((c) => {
+							const canvas = c as HTMLCanvasElement;
+							return canvas.width > 0 && canvas.height > 0;
+						});
+					},
+					{ timeout: isProduction ? 25000 : 30000 }
+				)
+				.catch((err) => {
+					// Se não conseguir aguardar os gráficos, aguardar um tempo fixo
+					console.log("Aguardando gráficos renderizarem...", err.message);
+				});
 
-				// Aguardar um pouco mais para garantir renderização completa
-				await new Promise((resolve) => setTimeout(resolve, 2000));
-			}
+			// Aguardar um tempo adicional para garantir que todos os gráficos foram renderizados
+			// Chart.js pode precisar de tempo extra para finalizar a renderização
+			await new Promise((resolve) => setTimeout(resolve, isProduction ? 4000 : 3000));
 
 			// Gerar o PDF
 			const pdf = await page.pdf({
