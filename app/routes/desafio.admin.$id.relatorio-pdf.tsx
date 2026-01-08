@@ -1,5 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
 	const { id } = params;
@@ -13,10 +14,28 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		const baseUrl = `${url.protocol}//${url.host}`;
 		const relatorioUrl = `${baseUrl}/desafio/admin/${id}/relatorio`;
 
-		// Iniciar o navegador headless
+		// Detectar se está em produção (Vercel)
+		const isProduction =
+			!!process.env.VERCEL || process.env.NODE_ENV === "production";
+
+		// Configurar opções do Puppeteer para ambiente serverless
 		const browser = await puppeteer.launch({
+			args: isProduction
+				? [
+						...chromium.args,
+						"--hide-scrollbars",
+						"--disable-web-security",
+						"--disable-features=IsolateOrigins,site-per-process",
+				  ]
+				: ["--no-sandbox", "--disable-setuid-sandbox"],
+			defaultViewport: isProduction
+				? { width: 1920, height: 1080 }
+				: { width: 1200, height: 1600 },
+			executablePath: isProduction
+				? await chromium.executablePath()
+				: process.env.PUPPETEER_EXECUTABLE_PATH ||
+				  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 			headless: true,
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
 		});
 
 		try {
