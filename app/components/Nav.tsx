@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "@remix-run/react";
 import { IoMdMenu, IoMdClose, IoIosLogOut } from "react-icons/io";
-import { GiMuscleUp } from "react-icons/gi";
 
 export default function Index(aluno: any) {
 	const [navbar, setNavbar] = useState(false);
@@ -37,29 +36,6 @@ export default function Index(aluno: any) {
 								</NavLink>
 							</>
 						)}
-						{!aluno.aluno?.idMember && (
-							<div className=' border items-center space-x-2  bg-orange-400 shadow rounded-xl   p-2 flex md:hidden '>
-								<div>
-									<GiMuscleUp className='text-white' />
-									{/* <img
-										src='/assets/avatarlauno.png'
-										alt='logo'
-										className='w-5'
-									/> */}
-								</div>
-								{/* <div className='text-sm  text-white '>
-									<NavLink
-										to='/login'
-										prefetch='render'
-										onClick={() => setNavbar(!navbar)}
-										className={({ isActive }) =>
-											isActive ? activeClassName : NoaActiveClassName
-										}>
-										ALUNO
-									</NavLink>
-								</div> */}
-							</div>
-						)}
 
 						<div className='md:hidden'>
 							<button
@@ -88,6 +64,17 @@ export default function Index(aluno: any) {
 										isActive ? activeClassName : NoaActiveClassName
 									}>
 									HOME
+								</NavLink>
+							</li>
+							<li className='font-semibold text-gray-600 hover:text-blue-600'>
+								<NavLink
+									to='/desafio'
+									prefetch='render'
+									onClick={() => setNavbar(!navbar)}
+									className={({ isActive }) =>
+										isActive ? activeClassName : NoaActiveClassName
+									}>
+									DESAFIO
 								</NavLink>
 							</li>
 							{aluno.aluno?.idMember && (

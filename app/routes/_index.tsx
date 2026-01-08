@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { NavLink, useLoaderData } from "@remix-run/react";
 import { getAulas } from "~/utils/aulas.server";
 import { FaWhatsapp, FaInstagram } from "react-icons/fa/";
 import { MdOutlineAlternateEmail } from "react-icons/md";
@@ -38,25 +38,26 @@ export default function Index() {
 					</div>
 				</div>
 			</div>
-			<div className='col-span-12 rounded-lg md:h-[523px] md:row-span-2 md:col-span-5 md:relative'>
+			<div className='col-span-12 rounded-lg md:h-[523px] md:row-span-2 md:col-span-5 relative'>
 				<img
-					src='/assets/alice.jpg'
+					src='/assets/desafio.jpg'
 					alt='background'
 					className=' object-cover w-full  h-[212px] md:h-[523px] md:w-full rounded-xl '
 				/>
-				<div className='flex flex-col gap-2 mt-2 px-2 md:absolute md:bottom-4 md:left-0 md:right-0 md:px-4'>
+				<div className='mt-2 px-2 md:absolute md:top-4 md:left-0 md:right-0 md:px-4'>
 					<h2 className='text-stone-800 text-center text-lg md:text-xl font-bold bg-orange-400/90 px-4 py-2 rounded-lg mb-1'>
-						Fotos Disponíveis para Compra !!!!
+						DESAFIO GRATUITO SUA NOVA VERSÃO - 21 DIAS <br /> O primeiro passo
+						muda tudo
 					</h2>
-					<a
-						href='https://www.fotto.com.br/espetaculo-de-ballet-alice-no-pais-das-maravilhas-quattor/e/211346/'
-						target='_blank'
-						rel='noopener noreferrer'
-						className='w-full md:w-auto md:mx-auto'>
-						<Button className='w-full md:w-auto md:px-6 shadow shadow-stone-400/75 bg-orange-400 text-white text-sm md:text-base rounded-xl'>
-							Comprar Fotos
-						</Button>
-					</a>
+				</div>
+				<div className='px-2 md:absolute md:bottom-4 md:left-0 md:right-0 md:px-4 flex justify-center mt-2'>
+					<Button
+						asChild
+						className='w-full md:w-auto md:px-6 shadow shadow-stone-400/75 bg-orange-400 text-white text-sm md:text-base rounded-xl'>
+						<NavLink to='/desafio' prefetch='render'>
+							Entrar no Desafio
+						</NavLink>
+					</Button>
 				</div>
 			</div>
 			{/* <div className='col-span-12 rounded-lg md:h-[523px] md:row-span-2 md:col-span-5'>

@@ -60,6 +60,33 @@ model historico {
     planejados Planejados[]
 }
 
+model desafio {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    aluno      String?
+    nascimento DateTime  @db.Date
+    objetivo   String[]
+    whatsapp   String?
+    obs        String?
+    medidas    Medidas[]
+
+    @@index([aluno])
+    @@index([whatsapp])
+}
+
+type Medidas {
+    peso                     Int?
+    altura                   Int?
+    imc                      Float?
+    percentualGordura        Float?
+    massaGordura             Float?
+    massaMagra               Float?
+    massaMuscularEsqueletica Float?
+    massaOssea               Float?
+    aguaCorporal             Float?
+    data                     DateTime @db.Date
+    obs                      String?
+}
+
 model treinos {
     id         String              @id @default(auto()) @map("_id") @db.ObjectId
     exercicios TreinosExercicios[]
