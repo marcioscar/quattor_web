@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button";
 
 // Constante para uso no cliente (evita depender do import de .server no bundle)
 const OBJETIVOS_CLIENTE = [
+	"Emagrecer",
 	"Melhorar saude",
 	"Fortalecimento Muscular",
 	"Se sentir mais disposto",
-	"Emagrecer",
 	"Ganhar massa muscular",
 	"Recomendação médica",
+	"Melhorar condicionamento físico",
 ] as const;
 
 function formatObjetivoLabel(o: string) {

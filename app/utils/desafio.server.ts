@@ -2,12 +2,13 @@ import { prisma } from "~/utils/prisma.server";
 import type { Prisma } from "@prisma/client";
 
 export const DESAFIO_OBJETIVOS = [
+	"Emagrecer",
 	"Melhorar saude",
 	"Fortalecimento Muscular",
 	"Se sentir mais disposto",
-	"Emagrecer",
 	"Ganhar massa muscular",
 	"Recomendação médica",
+	"Melhorar condicionamento físico",
 ] as const;
 
 export type DesafioObjetivo = (typeof DESAFIO_OBJETIVOS)[number];
