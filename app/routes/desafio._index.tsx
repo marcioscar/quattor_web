@@ -201,7 +201,7 @@ export default function DesafioIndex() {
 						Indicações gerais de alimentação: Orientações educativas — não é
 						dieta
 					</li>
-					<li>2 aulões especiais.</li>
+					<li>Aulões todas as semanas</li>
 				</ul>
 			</div>
 
