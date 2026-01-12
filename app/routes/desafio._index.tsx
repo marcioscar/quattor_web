@@ -191,7 +191,7 @@ export default function DesafioIndex() {
 			{/* ESTRUTURA */}
 			<div className='col-span-12 bg-white/40 rounded-xl shadow-sm p-4 md:p-6'>
 				<h2 className='text-stone-900 text-xl md:text-2xl font-semibold'>
-					Estrutura Geral do treino
+					Estrutura Geral do treino teste a teste
 				</h2>
 				<ul className='mt-3 list-disc list-inside text-stone-800 space-y-2'>
 					<li>Treino específico elaborado para o desafio.</li>
