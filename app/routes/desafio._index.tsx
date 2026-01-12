@@ -23,12 +23,13 @@ import {
 
 // Constante duplicada para uso no cliente
 const OBJETIVOS_CLIENTE = [
+	"Emagrecer",
 	"Melhorar saude",
 	"Fortalecimento Muscular",
 	"Se sentir mais disposto",
-	"Emagrecer",
 	"Ganhar massa muscular",
 	"Recomendação médica",
+	"Melhorar condicionamento físico",
 ] as const;
 
 type LoaderData = {
@@ -79,18 +80,21 @@ export const action: ActionFunction = async ({ request }) => {
 	const nascimento = String(formData.get("nascimento") || "").trim();
 	const whatsapp = String(formData.get("whatsapp") || "").trim();
 	const obs = String(formData.get("obs") || "").trim();
-	const objetivosValues = formData
-		.getAll("objetivos")
-		.map(String)
-		.filter((o): o is DesafioObjetivo =>
-			DESAFIO_OBJETIVOS.includes(o as DesafioObjetivo)
-		);
+	const objetivoValue = String(formData.get("objetivo") || "").trim();
+	const objetivoValidado: DesafioObjetivo | null = DESAFIO_OBJETIVOS.includes(
+		objetivoValue as DesafioObjetivo
+	)
+		? (objetivoValue as DesafioObjetivo)
+		: null;
 
 	const errors: Record<string, string> = {};
 	if (!aluno) errors.aluno = "Informe seu nome.";
 	if (!nascimento) errors.nascimento = "Informe sua data de nascimento.";
 	if (!whatsapp || whatsapp.replace(/\D/g, "").length < 8) {
 		errors.whatsapp = "Informe seu WhatsApp.";
+	}
+	if (!objetivoValidado) {
+		errors.objetivo = "Selecione um objetivo.";
 	}
 
 	if (Object.keys(errors).length) {
@@ -102,7 +106,7 @@ export const action: ActionFunction = async ({ request }) => {
 			aluno,
 			nascimento: new Date(nascimento),
 			whatsapp,
-			objetivos: objetivosValues,
+			objetivos: objetivoValidado ? [objetivoValidado] : [],
 			obs,
 		});
 		return json({ ok: true });
@@ -266,7 +270,7 @@ export default function DesafioIndex() {
 					</div>
 					<div className='md:col-span-2'>
 						<label className='block text-sm text-stone-700 mb-2'>
-							Objetivos (múltipla escolha)
+							Objetivo
 						</label>
 						<div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
 							{OBJETIVOS_CLIENTE.map((o) => (
@@ -274,8 +278,8 @@ export default function DesafioIndex() {
 									key={o}
 									className='inline-flex items-center gap-2 text-stone-800'>
 									<input
-										type='checkbox'
-										name='objetivos'
+										type='radio'
+										name='objetivo'
 										value={o}
 										className='h-4 w-4 accent-orange-400'
 									/>
@@ -283,6 +287,11 @@ export default function DesafioIndex() {
 								</label>
 							))}
 						</div>
+						{actionData?.errors?.objetivo && (
+							<p className='text-xs text-red-600 mt-1'>
+								{actionData.errors.objetivo}
+							</p>
+						)}
 					</div>
 					<div className='md:col-span-2'>
 						<label className='block text-sm text-stone-700 mb-1'>
