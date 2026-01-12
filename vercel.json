@@ -1,6 +1,6 @@
 {
 	"functions": {
-		"app/routes/desafio.admin.$id.relatorio-pdf.tsx": {
+		"build/index.js": {
 			"maxDuration": 60
 		}
 	}
