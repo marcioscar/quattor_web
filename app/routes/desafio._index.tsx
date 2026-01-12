@@ -36,7 +36,7 @@ type LoaderData = {
 };
 
 function getDesafioInicio() {
-	return process.env.NEXT_PUBLIC_DESAFIO_INICIO || "2026-01-19";
+	return process.env.NEXT_PUBLIC_DESAFIO_INICIO || "2026-01-20";
 }
 
 function formatObjetivoLabel(o: string) {
@@ -166,7 +166,7 @@ export default function DesafioIndex() {
 				<p className='mt-3 text-stone-800 leading-relaxed'>
 					Um desafio de 21 dias criado para ajudar alunos da academia a:
 					<br />
-					começar da forma correta alcanças os seus objetivos; criar constância
+					começar da forma correta alcançar os seus objetivos; criar constância
 					nos treinos, aumentar energia e disposição; iniciar o ano com apoio,
 					variedade e motivação.
 				</p>
@@ -191,18 +191,12 @@ export default function DesafioIndex() {
 			{/* ESTRUTURA */}
 			<div className='col-span-12 bg-white/40 rounded-xl shadow-sm p-4 md:p-6'>
 				<h2 className='text-stone-900 text-xl md:text-2xl font-semibold'>
-					Estrutura Geral do treino do COMPROMISSO 21
+					Estrutura Geral do treino
 				</h2>
 				<ul className='mt-3 list-disc list-inside text-stone-800 space-y-2'>
-					<li>
-						Frequência: 3 a 5x por semana na musculação, com treino específico
-						elaborado para o desafio.
-					</li>
-					<li>
-						Aulas da academia ou aeróbico para cumprir a meta mínima de 2x,
-						podendo ser na academia ou não.
-					</li>
-					<li>Bioimpedância semanal - 3 no total</li>
+					<li>Treino específico elaborado para o desafio.</li>
+
+					<li>Bioimpedância semanal - totalizando 3 medidas</li>
 					<li>
 						Indicações gerais de alimentação: Orientações educativas — não é
 						dieta
