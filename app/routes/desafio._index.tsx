@@ -14,7 +14,6 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
 	DESAFIO_OBJETIVOS,
 	createDesafioInscricao,
@@ -79,7 +78,6 @@ export const action: ActionFunction = async ({ request }) => {
 	const aluno = String(formData.get("aluno") || "").trim();
 	const nascimento = String(formData.get("nascimento") || "").trim();
 	const whatsapp = String(formData.get("whatsapp") || "").trim();
-	const obs = String(formData.get("obs") || "").trim();
 	const objetivoValue = String(formData.get("objetivo") || "").trim();
 	const objetivoValidado: DesafioObjetivo | null = DESAFIO_OBJETIVOS.includes(
 		objetivoValue as DesafioObjetivo
@@ -107,7 +105,7 @@ export const action: ActionFunction = async ({ request }) => {
 			nascimento: new Date(nascimento),
 			whatsapp,
 			objetivos: objetivoValidado ? [objetivoValidado] : [],
-			obs,
+			obs: "",
 		});
 		return json({ ok: true });
 	} catch (e) {
@@ -292,16 +290,6 @@ export default function DesafioIndex() {
 								{actionData.errors.objetivo}
 							</p>
 						)}
-					</div>
-					<div className='md:col-span-2'>
-						<label className='block text-sm text-stone-700 mb-1'>
-							Observações (opcional)
-						</label>
-						<Textarea
-							name='obs'
-							rows={3}
-							placeholder='Alguma observação que queira compartilhar'
-						/>
 					</div>
 					<div className='md:col-span-2'>
 						<Button
